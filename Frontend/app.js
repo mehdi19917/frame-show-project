@@ -27,7 +27,7 @@ const WINDOWS_INDEX_KEY = 'windows_models';
 
 // چک کردن اینکه آیا در محیط Electron هستیم یا مرورگر معمولی
 const isElectron = typeof window.electronAPI !== 'undefined';
-const API_BASE_URL = "https://frame-show-project-1.onrender.com/health";
+const API_BASE_URL = "https://frame-show-project-1.onrender.com";
 
 // =========================================================================================
 // ********************** تابع ارسال گزارش به Google Form **********************
