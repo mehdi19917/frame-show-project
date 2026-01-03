@@ -1,0 +1,9 @@
+[build]
+  command = ""
+  publish = "frontend/"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+git add .

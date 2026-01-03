@@ -536,10 +536,13 @@
     </div> 
 </div> 
 <script>
-    const LICENSE_API = "https://script.google.com/macros/s/AKfycbzc6FjiJJK5MVjwZHWJF_mh1-34CqIOHPIkxZC5pr5HdUp9Td1EepMlPG_HADNL6Bw/exec";
-    
-    const state = {
-        door: { bg: null, overlay: null, points: [], activePoint: null },
+// START: خط جدید برای تشخیص محیط
+const isElectron = typeof window.electronAPI !== 'undefined';
+// END: خط جدید
+
+const LICENSE_API = "https://script.google.com/macros/s/AKfycbzc6FjiJJK5MVjwZHWJF_mh1-34CqIOHPIkxZC5pr5HdUp9Td1EepMlPG_HADNL6Bw/exec";
+
+const state = {
         window: { bg: null, overlay: null, points: [], activePoint: null }
     };
     const getEl = id => document.getElementById(id);
