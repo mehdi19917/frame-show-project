@@ -1,0 +1,8 @@
+/venv_vto/
+/node_modules/
+/dist/
+/build/
+/win-unpacked/
+__pycache__/
+*.pyc
+*.log

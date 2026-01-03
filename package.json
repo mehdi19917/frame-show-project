@@ -1,0 +1,66 @@
+{
+  "name": "frameshow-ai",
+  "version": "1.0.0",
+  "description": "Virtual Try-On (VTO) application using Frame Show AI.",
+  "author": "Your Company or Name",
+  "license": "ISC",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run py-server-build && electron .",
+    "cleanup-js": "rimraf main.js preload.js",
+    "obfuscate-js": "javascript-obfuscator main.js --output main.obfuscated.js && javascript-obfuscator preload.js --output preload.obfuscated.js",
+    "py-server-build": "venv_vto\\Scripts\\pyinstaller.exe FrameShowAIServer.spec --distpath dist",
+    "dist": "npm run py-server-build && electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^28.2.1",
+    "electron-builder": "^24.9.1",
+    "electron-packager": "^17.1.2",
+    "javascript-obfuscator": "^4.1.0",
+    "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
+    "axios": "^1.13.2",
+    "electron-store": "^11.0.2",
+    "fs-extra": "^11.3.2",
+    "node-rembg": "^1.0.2"
+  },
+  "build": {
+    "appId": "com.yourcompany.frameshowai",
+    "productName": "Frame Show AI",
+    "copyright": "Copyright © 2024 Your Company",
+    "files": [
+      "**/*",
+      "main.js",
+      "preload.js",
+      "!main.obfuscated.js",
+      "!preload.obfuscated.js",
+      "!server.py",
+      "app.js",
+      "index.html",
+      "loading.html",
+      "iconvk.png",
+      "!venv_vto/**/*",
+      "!dist/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "iconvk.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+"extraFiles": [
+  {
+    "from": "dist/FrameShowAIServer",
+    "to": "FrameShowAIServer"
+  }
+]
+  }
+}

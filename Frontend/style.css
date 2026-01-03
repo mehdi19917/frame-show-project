@@ -1,0 +1,164 @@
+/* -------------------- */
+/* استایل‌های عمومی */
+/* -------------------- */
+body {
+    direction: rtl;
+    font-family: Tahoma, 'Inter', sans-serif;
+    text-align: center;
+    background-color: #f0f4f8; /* آبی روشن */
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    line-height: 1.6;
+
+    /* 🔒 محدودیت امنیتی: غیرفعال کردن انتخاب متن در کل برنامه */
+    -webkit-user-select: none; /* برای Chromium/Electron */
+    user-select: none;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: 1px solid #e0e7ff; /* حاشیه ملایم */
+}
+
+h1 {
+    color: #059669; /* سبز تیره */
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+p {
+    color: #555;
+    margin-bottom: 25px;
+}
+
+/* ----------------------------------- */
+/* ساختار حیاتی VTO: برای هم‌پوشانی عکس و Canvas */
+#vto-container {
+    position: relative; 
+    display: block; /* تغییر به بلاک برای ریسپانسیو بهتر */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 30px auto;
+    border-radius: 12px;
+    overflow: hidden; /* گوشه‌های گرد برای کانتینر */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* عکس خانه: فضا را تعریف می‌کند */
+#user-photo {
+    /* ابعاد و موقعیت توسط JS و CSS کنترل می‌شود */
+    display: block; 
+    max-width: 100%;
+    height: auto;
+    width: 100%; 
+    object-fit: contain; 
+}
+
+/* Canvas: باید Absolute باشد تا روی عکس قرار گیرد */
+#door-overlay {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%; 
+    height: 100%;
+    cursor: crosshair; 
+}
+
+/* ----------------------------------- */
+/* کنترل‌ها و دکمه‌ها */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* دکمه اصلی (CTA) */
+.cta-button {
+    background-color: #10b981; /* سبز */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.cta-button:hover:not(:disabled) {
+    background-color: #059669;
+    transform: translateY(-1px);
+}
+
+/* دکمه‌های کنترلی فرعی (مثل Reset و Download) */
+.control-button {
+    background-color: #f59e0b; /* نارنجی (برای ریست) */
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.control-button#download-btn {
+    background-color: #3b82f6; /* آبی برای دانلود */
+}
+
+.control-button#download-btn:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.control-button:hover:not(:disabled) {
+    background-color: #d97706;
+}
+
+/* وضعیت غیرفعال */
+.cta-button:disabled, .control-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+
+#door-select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    min-width: 200px;
+    background-color: #f9fafb;
+}
+
+#main-cta-label {
+    flex-basis: 100%;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #3b82f6; /* آبی برای وضعیت */
+    font-size: 1.1em;
+}
+
+/* ریسپانسیو برای موبایل */
+@media (max-width: 600px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .cta-button, .control-button, #door-select {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
