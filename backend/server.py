@@ -28,6 +28,7 @@ try:
     GEMINI_AVAILABLE = True
 except ImportError:
     warnings.warn("Gemini libraries not found. Advanced Inpainting is disabled.")
+app = Flask(__name__)
 
 origins = [
     "https://65955b2585fcd200085a1a1c--meek-pie-7517c6.netlify.app",
