@@ -1,0 +1,12 @@
+[
+  {
+    "id": "window-1",
+    "name": "پنجره دو جداره سفید",
+    "imgData": "https://res.cloudinary.com/your-cloud/image/upload/v123/white-pvc-window.png"
+  },
+  {
+    "id": "window-2",
+    "name": "پنجره آلومینیومی مشکی",
+    "imgData": "https://res.cloudinary.com/your-cloud/image/upload/v123/black-aluminum-window.png"
+  }
+]

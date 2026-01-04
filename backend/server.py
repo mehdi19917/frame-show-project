@@ -29,9 +29,14 @@ try:
 except ImportError:
     warnings.warn("Gemini libraries not found. Advanced Inpainting is disabled.")
 
-app = Flask(__name__)
-CORS(app) # فعال‌سازی CORS برای اجازه دسترسی از Electron/Frontend
-
+origins = [
+    "https://65955b2585fcd200085a1a1c--meek-pie-7517c6.netlify.app",
+    "http://localhost:8888" # برای تست محلی در آینده
+]
+CORS(app, resources={
+    r"/api/*": {"origins": origins},
+    r"/models/*": {"origins": origins} # مسیر جدید را هم اضافه می‌کنیم
+})
 # <<<<<<<<<<<<<<< کل این بلاک را جایگزین بخش توابع کمکی فعلی خود کنید >>>>>>>>>>>>>>>
 
 # =========================================================================================
@@ -250,3 +255,23 @@ def grabcut_api():
 if __name__ == '__main__':
     print("Starting AI Service (Python Flask)...")
     app.run(host='127.0.0.1', port=5000, debug=False)
+    
+    # server.py - این را به انتهای فایل اضافه کنید
+
+@app.route('/models/<string:model_type>.json')
+def get_models_json(model_type):
+    """
+    این API، فایل‌های JSON مربوط به مدل‌ها را برمی‌گرداند.
+    """
+    if model_type not in ['doors', 'windows']:
+        return jsonify({"error": "Invalid model type"}), 404
+    
+    file_path = os.path.join('models', f'{model_type}.json')
+    
+    if not os.path.exists(file_path):
+        return jsonify({"error": f"{model_type}.json not found on server"}), 404
+        
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    return jsonify(data)

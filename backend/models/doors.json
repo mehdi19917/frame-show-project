@@ -1,0 +1,12 @@
+[
+  {
+    "id": "door-1",
+    "name": "درب چوبی کلاسیک",
+    "imgData": "https://res.cloudinary.com/your-cloud/image/upload/v123/classic-door.png"
+  },
+  {
+    "id": "door-2",
+    "name": "درب مدرن سفید",
+    "imgData": "https://res.cloudinary.com/your-cloud/image/upload/v123/modern-door.png"
+  }
+]
