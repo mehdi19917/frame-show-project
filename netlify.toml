@@ -4,7 +4,7 @@
   # ما هیچ دستور ساختی نداریم، پس این خالی است
   command = ""
   # به Netlify بگو که سایت نهایی در این پوشه است
-  publish = "frontend/"
+  publish = "Frontend/"
 
 [[redirects]]
   from = "/*"
