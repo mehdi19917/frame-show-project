@@ -542,9 +542,13 @@ const isElectron = typeof window.electronAPI !== 'undefined';
 
 const LICENSE_API = "https://script.google.com/macros/s/AKfycbzc6FjiJJK5MVjwZHWJF_mh1-34CqIOHPIkxZC5pr5HdUp9Td1EepMlPG_HADNL6Bw/exec";
 
+// =======================================================
+// ===> این بلاک را جایگزین متغیر state فعلی کنید <===
+// =======================================================
 const state = {
-        window: { bg: null, overlay: null, points: [], activePoint: null }
-    };
+    door: { bg: null, overlay: null, points: [], activePoint: null },
+    window: { bg: null, overlay: null, points: [], activePoint: null }
+};
     const getEl = id => document.getElementById(id);
     function updateAuthUI(status, data) {
         const authBox = getEl('auth-container');
