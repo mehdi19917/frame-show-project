@@ -1,9 +1,12 @@
+# netlify.toml - پیکربندی نهایی و صحیح
+
 [build]
+  # ما هیچ دستور ساختی نداریم، پس این خالی است
   command = ""
+  # به Netlify بگو که سایت نهایی در این پوشه است
   publish = "frontend/"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-git add .
