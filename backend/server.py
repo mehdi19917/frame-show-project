@@ -251,13 +251,8 @@ def grabcut_api():
     except Exception as e:
         print(f"Error in GrabCut API: {e}")
         return jsonify({"error": str(e)}), 500
-
-# =========================================================================
-if __name__ == '__main__':
-    print("Starting AI Service (Python Flask)...")
-    app.run(host='127.0.0.1', port=5000, debug=False)
     
-    # server.py - این را به انتهای فایل اضافه کنید
+        # server.py - این را به انتهای فایل اضافه کنید
 
 @app.route('/models/<string:model_type>.json')
 def get_models_json(model_type):
@@ -276,3 +271,10 @@ def get_models_json(model_type):
         data = json.load(f)
     
     return jsonify(data)
+
+
+# =========================================================================
+if __name__ == '__main__':
+    print("Starting AI Service (Python Flask)...")
+    app.run(host='127.0.0.1', port=5000, debug=False)
+    
