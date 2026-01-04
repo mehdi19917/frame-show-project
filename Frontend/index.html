@@ -1051,27 +1051,53 @@ function startGrabCutProcess(type, index) {
     canvas.onmouseleave = canvas.onmouseup;
     canvas.oncontextmenu = e => e.preventDefault();
     // --- ۵. دکمه‌ها ---
-    async function runProcess() {
-        if (!currentRect) { alert("لطفاً ابتدا یک کادر دور سوژه بکشید."); return; }
-        processBtn.disabled = true;
-        processBtn.innerText = '⏳ پردازش...';
-        try {
-            // ** مهم: دیگر هیچ نقطه‌ای ارسال نمی‌شود **
-            const result = await window.electronAPI.runGrabCut({ image: originalImageSrc, rect: currentRect, refine_points: [] });
-            
-            if (result.status === "success") {
-                img.src = result.image;
-                instruction.innerText = "نتیجه پردازش. برای اصلاح، کادر جدیدی بکشید.";
-            } else {
-                throw new Error(result.error);
+// =======================================================
+// ===> این تابع را جایگزین تابع runProcess فعلی کنید <===
+// =======================================================
+async function runProcess() {
+    if (!currentRect) { alert("لطفاً ابتدا یک کادر دور سوژه بکشید."); return; }
+    processBtn.disabled = true;
+    processBtn.innerText = '⏳ پردازش...';
+
+    const requestData = { image: originalImageSrc, rect: currentRect, refine_points: [] };
+    let result; // متغیر نتیجه را بیرون تعریف می‌کنیم
+
+    try {
+        // چک می‌کنیم در کدام محیط هستیم
+        if (isElectron) {
+            // --- حالت دسکتاپ (Electron) ---
+            // از API داخلی برای ارتباط با سرور محلی استفاده کن
+            result = await window.electronAPI.runGrabCut(requestData);
+        } else {
+            // --- حالت وب (افزونه) ---
+            // یک درخواست fetch به سرور آنلاین ارسال کن
+            const webResponse = await fetch(`${API_BASE_URL}/api/grabcut`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!webResponse.ok) {
+                throw new Error(`Server error: ${webResponse.statusText}`);
             }
-        } catch (error) {
-            alert('❌ خطا در پردازش: ' + error.message);
-        } finally {
-            processBtn.disabled = false;
-            processBtn.innerText = 'پردازش';
+            result = await webResponse.json();
         }
+
+        // ادامه منطق که برای هر دو حالت یکسان است
+        if (result.status === "success") {
+            img.src = result.image;
+            instruction.innerText = "نتیجه پردازش. برای اصلاح، کادر جدیدی بکشید.";
+        } else {
+            throw new Error(result.error || "Unknown server error");
+        }
+
+    } catch (error) {
+        alert('❌ خطا در پردازش: ' + error.message);
+    } finally {
+        processBtn.disabled = false;
+        processBtn.innerText = 'پردازش';
     }
+}
     processBtn.onclick = runProcess;
     
     resetRectBtn.onclick = () => {
