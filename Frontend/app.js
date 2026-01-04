@@ -606,6 +606,45 @@ async function setupEventListeners() {
         link.href = windowCanvas.toDataURL('image/jpeg', 1.0);
         link.click();
     };
+    // =======================================================
+// ===> START: این بلاک کد جدید را اضافه کنید <===
+// =======================================================
+const pingBtn = document.getElementById('ping-server-btn');
+if (pingBtn) {
+    pingBtn.onclick = async () => {
+        console.log("Pinging server...");
+        const statusTag = document.getElementById('connection-status'); // فرض می‌کنیم این ID وجود دارد
+        if (statusTag) statusTag.innerText = "در حال ارسال پینگ...";
+        
+        try {
+            // ما مستقیماً به آدرس health سرور یک درخواست GET ساده می‌زنیم
+            const response = await fetch(`${API_BASE_URL}/health`);
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (result.status === 'ok') {
+                alert("✅ موفقیت! ارتباط با سرور کاملاً برقرار است.");
+                if (statusTag) {
+                    statusTag.innerText = "✅ سرور آنلاین و در دسترس است.";
+                    statusTag.style.color = 'var(--success-color)';
+                }
+            } else {
+                throw new Error("Server returned an unexpected response.");
+            }
+        } catch (error) {
+            console.error("PING FAILED:", error);
+            alert(`❌ شکست! ارتباط با سرور برقرار نشد.\n\nError: ${error.message}`);
+            if (statusTag) {
+                statusTag.innerText = "❌ سرور در دسترس نیست.";
+                statusTag.style.color = 'var(--danger-color)';
+            }
+        }
+    };
+}
+// ===> END: پایان بلاک کد جدید <===
 } 
 
 function throttle(func, limit) {
