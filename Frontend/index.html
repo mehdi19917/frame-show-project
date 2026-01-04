@@ -740,6 +740,40 @@ div.innerHTML = `
                 };
             }
         }
+                // =======================================================
+        // ===> START: بلاک کد جدید از اینجا شروع می‌شود <===
+        // =======================================================
+        canvas.addEventListener('mousemove', (e) => {
+            if (state[type].activePoint !== null) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                let x = (e.clientX - rect.left) * scaleX;
+                let y = (e.clientY - rect.top) * scaleY;
+
+                x = Math.max(0, Math.min(x, canvas.width));
+                y = Math.max(0, Math.min(y, canvas.height));
+
+                state[type].points[state[type].activePoint] = { x, y };
+                showPoints(type);
+                render(type, false, true); 
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            if (state[type].activePoint !== null) {
+                render(type, true, true);
+                state[type].activePoint = null;
+            }
+        });
+        
+        window.addEventListener('mouseup', () => {
+            if (state[type].activePoint !== null) {
+                render(type, true, true);
+                state[type].activePoint = null;
+            }
+        });
     }
     function showPoints(type) {
         if (!state[type].bg) return;
@@ -916,33 +950,6 @@ function drawPerspectiveImg(ctx, img, pts) {
     // سپس Canvas موقت را با دستور drawImage روی Canvas اصلی می‌کشیم (این باعث ترکیب صحیح آلفا می‌شود)
     ctx.drawImage(tempCanvas, minX, minY);
 }
-    window.addEventListener('mousemove', (e) => {
-        ['door', 'window'].forEach(type => {
-            const activeIdx = state[type].activePoint;
-            if (activeIdx !== null) {
-                const canvas = getEl(`vto-${type}-canvas`);
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                let x = (e.clientX - rect.left) * scaleX;
-                let y = (e.clientY - rect.top) * scaleY;
-                x = Math.max(0, Math.min(x, canvas.width));
-                y = Math.max(0, Math.min(y, canvas.height));
-                state[type].points[activeIdx] = { x, y };
-                showPoints(type);
-                render(type, false);
-            }
-        });
-    });
-    window.addEventListener('mouseup', () => {
-        ['door', 'window'].forEach(type => {
-            if (state[type].activePoint !== null) {
-                state[type].activePoint = null;
-                render(type, true);
-            }
-        });
-    });
-    // =========================================================================
 // ===> ویرایشگر تصویر (نسخه نهایی، پایدار و بدون قلم‌مو) <===
 // =========================================================================
 function startGrabCutProcess(type, index) {
