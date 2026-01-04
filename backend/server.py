@@ -31,7 +31,7 @@ except ImportError:
 app = Flask(__name__)
 
 origins = [
-    "https://65955b2585fcd200085a1a1c--meek-pie-7517c6.netlify.app",
+    "https://695abb2d216292f2550c92f2--frame-show-ai-widget.netlify.app",
     "http://localhost:8888" # برای تست محلی در آینده
 ]
 CORS(app, resources={
