@@ -105,41 +105,49 @@ function handleImageUpload(e, isDoor) {
 // =========================================================================================
 
 // =======================================================
-// ===> این تابع را نیز جایگزین کنید <===
+// ===> START: این بلاک را جایگزین توابع getDoors و getWindows کنید <===
 // =======================================================
-async function getWindows() {
+
+async function getDoors() {
     if (isElectron) {
-        const data = await window.electronAPI.executeFsOperation('getStoreValue', WINDOWS_INDEX_KEY);
+        // در دسکتاپ، از فایل سیستم بخوان
+        const data = await window.electronAPI.executeFsOperation('getStoreValue', DOORS_INDEX_KEY);
         try { return JSON.parse(data || '[]'); } catch (e) { return []; }
     } else {
-        // حالت وب: از یک فایل JSON آنلاین بخوان
-        const response = await fetch(`${API_BASE_URL}/models/windows.json`);
-        return await response.json();
+        // در وب، از سرور آنلاین بخوان
+        try {
+            const response = await fetch(`${API_BASE_URL}/models/doors.json`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return await response.json();
+        } catch (e) { 
+            console.error("Could not fetch doors.json:", e); 
+            return []; // در صورت خطا، یک آرایه خالی برگردان
+        }
     }
 }
 
 async function getWindows() {
     if (isElectron) {
+        // در دسکتاپ، از فایل سیستم بخوان
         const data = await window.electronAPI.executeFsOperation('getStoreValue', WINDOWS_INDEX_KEY);
         try { return JSON.parse(data || '[]'); } catch (e) { return []; }
     } else {
-        return JSON.parse(localStorage.getItem(WINDOWS_INDEX_KEY) || '[]');
+        // در وب، از سرور آنلاین بخوان
+        try {
+            const response = await fetch(`${API_BASE_URL}/models/windows.json`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return await response.json();
+        } catch (e) { 
+            console.error("Could not fetch windows.json:", e); 
+            return []; // در صورت خطا، یک آرایه خالی برگردان
+        }
     }
 }
+
+// ===> END: پایان بلاک جایگزین <===
+// =======================================================
 
 function getBase64FromImage(imgElement, type = 'jpeg') {
-    const canvas = document.createElement('canvas');
-    canvas.width = imgElement.naturalWidth; 
-    canvas.height = imgElement.naturalHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(imgElement, 0, 0);
-    return canvas.toDataURL(type === 'png' ? 'image/png' : 'image/jpeg').split(',')[1];
-}
-
-function getPointPositionRatio(point, canvasWidth, canvasHeight, bgWidth, bgHeight) {
-    const scaleX = bgWidth / canvasWidth; 
-    const scaleY = bgHeight / canvasHeight;
-    return [ (point.x * scaleX) / bgWidth, (point.y * scaleY) / bgHeight ];
 }
 
 // =========================================================================================
@@ -488,35 +496,47 @@ function setupDraggablePoints() {
 // ********************** ناوبری و لودر **********************
 // =========================================================================================
 
+// ۳. اصلاح تابع handleModelSelect برای خواندن صحیح URL
 async function handleModelSelect(e, isDoor) {
     const id = e.target.value;
+    if (!id) {
+        isDoor ? currentDoorModel = null : currentWindowModel = null;
+        updatePointsVisibility();
+        return;
+    }
+
     const models = await (isDoor ? getDoors() : getWindows());
     const model = models.find(m => m.id === id);
-    if(model) {
-        if (isElectron) {
-            const files = await window.electronAPI.listFiles(isDoor ? 'doors' : 'windows');
-            const path = files.find(f => f.name === model.file)?.path;
-            if(path) {
-                const img = new Image();
-                img.onload = () => {
-                    if(isDoor) currentDoorModel = { ...model, img }; else currentWindowModel = { ...model, img };
-                    updatePointsVisibility();
-                    renderVTO_Python(isDoor ? 'door' : 'window');
-                };
-                img.src = path;
+
+    if (model) {
+        const img = new Image();
+        if (!isElectron) {
+            img.crossOrigin = "Anonymous"; // برای جلوگیری از خطای CORS در کانواس
+        }
+        img.onload = () => {
+            if (isDoor) {
+                currentDoorModel = { ...model, img };
+            } else {
+                currentWindowModel = { ...model, img };
             }
+            updatePointsVisibility();
+            // renderVTO(isDoor ? 'door' : 'window'); // رندر اولیه
+        };
+        
+        if (isElectron) {
+             window.electronAPI.executeFsOperation('getStoreValue', isDoor ? DOORS_INDEX_KEY : WINDOWS_INDEX_KEY)
+                .then(JSON.parse)
+                .then(storedModels => {
+                    const storedModel = storedModels.find(m => m.id === id);
+                    if (storedModel && storedModel.data) {
+                        img.src = storedModel.data; // داده Base64
+                    }
+                });
         } else {
-            const img = new Image();
-            img.onload = () => {
-                if(isDoor) currentDoorModel = { ...model, img }; else currentWindowModel = { ...model, img };
-                updatePointsVisibility();
-                renderVTO_Python(isDoor ? 'door' : 'window');
-            };
-            img.src = model.imgData;
+            img.src = model.imgData; // URL تصویر از فایل JSON
         }
     }
 }
-
 function showView(viewId) {
     document.querySelectorAll('.view').forEach(view => {
         view.style.display = 'none';
