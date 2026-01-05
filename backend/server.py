@@ -28,18 +28,9 @@ try:
     GEMINI_AVAILABLE = True
 except ImportError:
     warnings.warn("Gemini libraries not found. Advanced Inpainting is disabled.")
+
 app = Flask(__name__)
-
-origins = [
-    "https://695abb2d216292f2550c92f2--frame-show-ai-widget.netlify.app",
-    "http://localhost:8888" # برای تست محلی در آینده
-]
-CORS(app, resources={
-    r"/api/*": {"origins": origins},
-    r"/models/*": {"origins": origins} # مسیر جدید را هم اضافه می‌کنیم
-})
-# <<<<<<<<<<<<<<< کل این بلاک را جایگزین بخش توابع کمکی فعلی خود کنید >>>>>>>>>>>>>>>
-
+CORS(app) # <--- فقط این یک خط
 # =========================================================================================
 # ********************** توابع کمکی تبدیل (نسخه نهایی و یکپارچه) **********************
 # =========================================================================================
