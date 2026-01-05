@@ -263,21 +263,6 @@ def grabcut_api():
         print(f"Error in GrabCut API: {e}")
         return jsonify({"error": str(e)}), 500
 
-@app.route('/models/<string:model_type>.json')
-def get_models_json(model_type):
-    if model_type not in ['doors', 'windows']:
-        return jsonify({"error": "Invalid model type"}), 404
-    
-    file_path = os.path.join('models', f'{model_type}.json')
-    
-    if not os.path.exists(file_path):
-        return jsonify({"error": f"{model_type}.json not found on server"}), 404
-        
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    return jsonify(data)
-
 # =========================================================================
 if __name__ == '__main__':
     print("Starting AI Service (Python Flask)...")
