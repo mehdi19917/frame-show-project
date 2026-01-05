@@ -2,7 +2,6 @@
 # =========================================================================================
 # ===> نسخه تمیز شده import ها <===
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import base64
 from io import BytesIO
 from PIL import Image
@@ -14,7 +13,8 @@ import requests
 from typing import Tuple, Optional, Any
 import numpy as np
 import cv2
-# from rembg import remove  <-- دیگر به این نیازی نداریم
+
+app = Flask(__name__)
 
 # 🚨 تعریف اولیه برای جلوگیری از خطای Linter
 GEMINI_AVAILABLE = False
@@ -29,8 +29,6 @@ try:
 except ImportError:
     warnings.warn("Gemini libraries not found. Advanced Inpainting is disabled.")
 
-app = Flask(__name__)
-CORS(app) # <--- فقط این یک خط
 # =========================================================================================
 # ********************** توابع کمکی تبدیل (نسخه نهایی و یکپارچه) **********************
 # =========================================================================================
