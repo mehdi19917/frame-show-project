@@ -850,6 +850,7 @@ if (drawHelperLines) {
         navigator.clipboard.writeText(getEl('display-machine-id').innerText).then(() => alert("کد لایسنس کپی شد."));
     }
     document.addEventListener('contextmenu', e => e.preventDefault());
+// کد زیر را جایگزین کل تابع drawPerspectiveImg فعلی کنید
 function drawPerspectiveImg(ctx, img, pts) {
     const srcCanvas = document.createElement('canvas');
     srcCanvas.width = img.width;
@@ -859,6 +860,7 @@ function drawPerspectiveImg(ctx, img, pts) {
     const srcData = srcCtx.getImageData(0, 0, img.width, img.height).data;
     const srcCorners = [{ x: 0, y: 0 }, { x: img.width, y: 0 }, { x: img.width, y: img.height }, { x: 0, y: img.height }];
     const dstCorners = pts;
+
     function getTransformMatrix(src, dst) {
         const P = [
             [src[0].x, src[0].y, 1, 0, 0, 0, -src[0].x * dst[0].x, -src[0].y * dst[0].x],
@@ -871,9 +873,8 @@ function drawPerspectiveImg(ctx, img, pts) {
             [0, 0, 0, src[3].x, src[3].y, 1, -src[3].x * dst[3].y, -src[3].y * dst[3].y]
         ];
         const b = [dst[0].x, dst[0].y, dst[1].x, dst[1].y, dst[2].x, dst[2].y, dst[3].x, dst[3].y];
-        const h = gaussianElimination(P, b);
-        return [[h[0], h[1], h[2]], [h[3], h[4], h[5]], [h[6], h[7], 1]];
-    }
+
+        // این تابع را درست قبل از تابع drawPerspectiveImg قرار دهید
 function gaussianElimination(A, b) {
     const n = A.length;
     for (let i = 0; i < n; i++) {
@@ -897,8 +898,16 @@ function gaussianElimination(A, b) {
         for (let k = i - 1; k > -1; k--) b[k] -= A[k][i] * x[i];
     }
     return x;
-    
 }
+
+// حالا تابع drawPerspectiveImg بعد از این قرار می‌گیرد...
+// function drawPerspectiveImg(...) { ... }
+
+        // این تابع حالا تابع gaussianElimination عمومی را صدا می‌زند
+        const h = gaussianElimination(P, b);
+        return [[h[0], h[1], h[2]], [h[3], h[4], h[5]], [h[6], h[7], 1]];
+    }
+
     const invMatrix = getTransformMatrix(dstCorners, srcCorners);
     const minX = Math.floor(Math.min(pts[0].x, pts[1].x, pts[2].x, pts[3].x));
     const maxX = Math.ceil(Math.max(pts[0].x, pts[1].x, pts[2].x, pts[3].x));
@@ -906,15 +915,16 @@ function gaussianElimination(A, b) {
     const maxY = Math.ceil(Math.max(pts[0].y, pts[1].y, pts[2].y, pts[3].y));
     const width = maxX - minX;
     const height = maxY - minY;
-    
+
     if (width <= 0 || height <= 0) return;
-    // --- اصلاح اصلی اینجاست ---
+
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = width;
     tempCanvas.height = height;
     const tempCtx = tempCanvas.getContext('2d');
     const imgData = tempCtx.createImageData(width, height);
     const data = imgData.data;
+
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const dstX = minX + x;
@@ -922,27 +932,26 @@ function gaussianElimination(A, b) {
             const w = invMatrix[2][0] * dstX + invMatrix[2][1] * dstY + 1;
             const srcX = (invMatrix[0][0] * dstX + invMatrix[0][1] * dstY + invMatrix[0][2]) / w;
             const srcY = (invMatrix[1][0] * dstX + invMatrix[1][1] * dstY + invMatrix[1][2]) / w;
-            
+
             if (srcX < 0 || srcX >= img.width || srcY < 0 || srcY >= img.height) continue;
             const x1 = Math.floor(srcX), y1 = Math.floor(srcY);
             const x2 = Math.min(x1 + 1, img.width - 1), y2 = Math.min(y1 + 1, img.height - 1);
             const fx = srcX - x1, fy = srcY - y1;
             const fx1 = 1 - fx, fy1 = 1 - fy;
-            
+
             const i1 = (y1 * img.width + x1) * 4, i2 = (y1 * img.width + x2) * 4;
             const i3 = (y2 * img.width + x1) * 4, i4 = (y2 * img.width + x2) * 4;
             const w1 = fx1 * fy1, w2 = fx * fy1, w3 = fx1 * fy, w4 = fx * fy;
-            
+
             const out_offset = (y * width + x) * 4;
-            data[out_offset]   = srcData[i1] * w1 + srcData[i2] * w2 + srcData[i3] * w3 + srcData[i4] * w4;
-            data[out_offset+1] = srcData[i1+1] * w1 + srcData[i2+1] * w2 + srcData[i3+1] * w3 + srcData[i4+1] * w4;
-            data[out_offset+2] = srcData[i1+2] * w1 + srcData[i2+2] * w2 + srcData[i3+2] * w3 + srcData[i4+2] * w4;
-            data[out_offset+3] = srcData[i1+3] * w1 + srcData[i2+3] * w2 + srcData[i3+3] * w3 + srcData[i4+3] * w4;
+            data[out_offset] = srcData[i1] * w1 + srcData[i2] * w2 + srcData[i3] * w3 + srcData[i4] * w4;
+            data[out_offset + 1] = srcData[i1 + 1] * w1 + srcData[i2 + 1] * w2 + srcData[i3 + 1] * w3 + srcData[i4 + 1] * w4;
+            data[out_offset + 2] = srcData[i1 + 2] * w1 + srcData[i2 + 2] * w2 + srcData[i3 + 2] * w3 + srcData[i4 + 2] * w4;
+            data[out_offset + 3] = srcData[i1 + 3] * w1 + srcData[i2 + 3] * w2 + srcData[i3 + 3] * w3 + srcData[i4 + 3] * w4;
         }
     }
-    // ابتدا دیتا را روی Canvas موقت می‌کشیم
+
     tempCtx.putImageData(imgData, 0, 0);
-    // سپس Canvas موقت را با دستور drawImage روی Canvas اصلی می‌کشیم (این باعث ترکیب صحیح آلفا می‌شود)
     ctx.drawImage(tempCanvas, minX, minY);
 }
 // ===> ویرایشگر تصویر (نسخه نهایی، پایدار و بدون قلم‌مو) <===
