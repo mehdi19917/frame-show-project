@@ -874,37 +874,31 @@ function drawPerspectiveImg(ctx, img, pts) {
         const h = gaussianElimination(P, b);
         return [[h[0], h[1], h[2]], [h[3], h[4], h[5]], [h[6], h[7], 1]];
     }
-    function gaussianElimination(A, b) {
-        const n = A.length;
-        for (let i = 0; i < n; i++) {
-            let maxEl = Math.abs(A[i][i]), maxRow = i;
-            for (let k = i + 1; k < n; k++) {
-                if (Math.abs(A[k][i]) > maxEl) { maxEl = Math.abs(A[k][i]); maxRow = k; }
-            }
-            for (let k = i; k < n; k++) { [A[maxRow][k], A[i][k]] = [A[i][k], A[maxRow][k]]; }
-            [b[maxRow], b[i]] = [b[i], b[maxRow]];
-            for (let k = i + 1; k < n; k++) {
-                const c = -A[k][i] / A[i][i];
-                for (let j = i; j < n; j++) {
-                    if (i === j) A[k][j] = 0; else A[k][j] += c * A[i][j];
-                }
-                b[k] += c * b[i];
-            }
+function gaussianElimination(A, b) {
+    const n = A.length;
+    for (let i = 0; i < n; i++) {
+        let maxEl = Math.abs(A[i][i]), maxRow = i;
+        for (let k = i + 1; k < n; k++) {
+            if (Math.abs(A[k][i]) > maxEl) { maxEl = Math.abs(A[k][i]); maxRow = k; }
         }
-        const x = new Array(n);
-        for (let i = n - 1; i > -1; i--) {
-            x[i] = b[i] / A[i][i];
-            for (let k = i - 1; k > -1; k--) b[k] -= A[k][i] * x[i];
+        for (let k = i; k < n; k++) { [A[maxRow][k], A[i][k]] = [A[i][k], A[maxRow][k]]; }
+        [b[maxRow], b[i]] = [b[i], b[maxRow]];
+        for (let k = i + 1; k < n; k++) {
+            const c = -A[k][i] / A[i][i];
+            for (let j = i; j < n; j++) {
+                if (i === j) A[k][j] = 0; else A[k][j] += c * A[i][j];
+            }
+            b[k] += c * b[i];
         }
-        return x;
-        const resetBtn = getEl(`${type}-reset-btn`);
-    resetBtn.onclick = () => {
-        if (!state[type].bg) return;
-        state[type].overlay = null;
-        select.value = "";
-        render(type, false);
-    };
     }
+    const x = new Array(n);
+    for (let i = n - 1; i > -1; i--) {
+        x[i] = b[i] / A[i][i];
+        for (let k = i - 1; k > -1; k--) b[k] -= A[k][i] * x[i];
+    }
+    return x;
+    
+}
     const invMatrix = getTransformMatrix(dstCorners, srcCorners);
     const minX = Math.floor(Math.min(pts[0].x, pts[1].x, pts[2].x, pts[3].x));
     const maxX = Math.ceil(Math.max(pts[0].x, pts[1].x, pts[2].x, pts[3].x));
