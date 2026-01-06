@@ -368,7 +368,6 @@
             <button id="nav-cms-door" class="license-control">🚪 مدیریت درب‌ها</button>
             <button id="nav-cms-window" class="license-control">🪟 مدیریت پنجره‌ها</button>
             <button id="nav-tutorial" style="background: #64748b; color: white; border: none;">💡 راهنما و آموزش</button>
-
         </nav>
         <div class="receipt-submission-box">
             <small style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 8px; color: var(--primary-color); font-weight: bold; font-size: 0.82em; white-space: nowrap;">
@@ -537,7 +536,9 @@
     </div> 
 </div> 
 <script>
-
+// START: خط جدید برای تشخیص محیط
+const isElectron = typeof window.electronAPI !== 'undefined';
+// END: خط جدید
 // =======================================================
 // ===> این بلاک را جایگزین متغیر state فعلی کنید <===
 // =======================================================
@@ -1122,10 +1123,8 @@ async function runProcess() {
     };
 }
 
-    // app.js - نسخه جامع (سازگار با وب و Electron) + متصل به Google Forms
-const isElectron = typeof window.electronAPI !== 'undefined';
-const API_BASE_URL = "https://frame-show-ai-widget-kn0y.onrender.com";
-const LICENSE_API = "https://script.google.com/macros/s/AKfycbxF4L55lk2AMBaQBQFkONe3ZFRav3hkm9TC9N8VLPiNBnqA1tTSaz0xkjhPu-RLdBt2/exec";
+// app.js - نسخه جامع (سازگار با وب و Electron) + متصل به Google Forms
+
 // =========================================================================================
 // ********************** متغیرهای سراسری (Global Variables) **********************
 // =========================================================================================
@@ -1765,6 +1764,8 @@ function throttle(func, limit) {
 }
 
 window.onload = setupEventListeners;
+
 </script>
 </body>
 </html>
+
